@@ -36,7 +36,7 @@
 
   // Reveal on scroll
   const revealTargets = document.querySelectorAll(
-    ".about-grid, .about-cards, .product-block, .client-grid, .honor-grid, .patent-grid, .workshop-group, .equip-grid, .facility-grid, .process-figure, .systems-grid, .contact-card"
+    ".about-grid, .about-cards, .product-block, .capability-grid, .service-flow, .client-grid, .honor-grid, .patent-grid, .workshop-group, .equip-grid, .facility-grid, .process-figure, .systems-grid, .contact-card, .inquiry-panel"
   );
   revealTargets.forEach((el) => el.classList.add("reveal"));
 
@@ -86,4 +86,36 @@
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && !lightbox.hidden) closeLightbox();
   });
+
+  // Inquiry form → mailto
+  const form = document.getElementById("inquiryForm");
+  form?.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const to = form.dataset.email || "xpxyzm@163.com";
+    const subject = form.dataset.subject || "Website inquiry";
+    const body = [
+      `Name: ${data.get("name") || ""}`,
+      `Company: ${data.get("company") || ""}`,
+      `Email: ${data.get("email") || ""}`,
+      `Phone: ${data.get("phone") || ""}`,
+      "",
+      "Requirements:",
+      data.get("message") || "",
+    ].join("\n");
+    window.location.href = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  });
+
+  // Sticky CTA: hide near contact / when scrolled to bottom area
+  const sticky = document.getElementById("stickyCta");
+  const contact = document.getElementById("contact");
+  if (sticky && contact) {
+    const stickyIo = new IntersectionObserver(
+      ([entry]) => {
+        sticky.classList.toggle("is-hidden", entry.isIntersecting);
+      },
+      { threshold: 0.15 }
+    );
+    stickyIo.observe(contact);
+  }
 })();
